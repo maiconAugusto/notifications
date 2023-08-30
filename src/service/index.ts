@@ -29,7 +29,6 @@ function enviarNotificacao(notificacao) {
 
 // Converter a data e a string de horário em um objeto Date
 function parseDateTimeStrings(dateString, timeString) {
-  console.log(dateString, timeString)
   const [year, month, day] = dateString.split('-').map(Number);
   const [hour, minute] = timeString.split(':').map(Number);
   return new Date(year, month - 1, day, hour, minute);
