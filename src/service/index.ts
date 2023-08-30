@@ -17,9 +17,10 @@ function enviarNotificacao(notificacao) {
     },
     token: recipient,
   };
-  
+  console.log("sends")
   firebaseAdm.messaging().send(message)
-    .then(async() => {
+    .then(async(e) => {
+      console.log("succ", e)
       await notification_schema.updateOne({ _id: id }, { sentNotification: true });
     })
     .catch((error) => {
@@ -94,6 +95,7 @@ function agendarNotificacao(notification) {
   console.log("currentDate", getFormattedDate())
   // Agendar o envio da notificação com base na data e horário salvos pelo usuário
   schedule.scheduleJob(scheduledDateTime, () => {
+    console.log("scheduledDateTime SEND", scheduledDateTime)
     enviarNotificacao({ recipient: userId.recipient, title, body, id: _id });
   });
 }
