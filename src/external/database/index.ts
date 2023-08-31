@@ -11,7 +11,8 @@ class Database {
 
   public databaseConnection(): Promise<Mongoose> {
     // @ts-ignore
-    return mongoose.connect("mongodb+srv://sistemamg:IAckbJxUwgpXgsox@cluster0.vctr8.mongodb.net/teste", { useNewUrlParser: true, useUnifiedTopology: true })
+  
+    return mongoose.connect("mongodb+srv://sistemamg:IAckbJxUwgpXgsox@cluster0.vctr8.mongodb.net/teste")
       .then(() => {
         require('./schema/user_schema')
       })
