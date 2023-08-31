@@ -19,7 +19,7 @@ function enviarNotificacao(notificacao) {
   };
   console.log("sends")
   firebaseAdm.messaging().send(message)
-    .then(async(e) => {
+    .then(async (e) => {
       console.log("succ", e)
       await notification_schema.updateOne({ _id: id }, { sentNotification: true });
     })
@@ -54,13 +54,13 @@ function reiniciarAgendamentoDiario() {
 }
 
 function getFormattedDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Mês começa de 0
-    const day = String(today.getDate()).padStart(2, '0');
-  
-    return `${year}-${month}-${day}`;
-  }
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Mês começa de 0
+  const day = String(today.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
 
 // Atualizar ou agendar notificações após alterações no banco de dados
 async function atualizarAgendamentos() {
@@ -70,7 +70,7 @@ async function atualizarAgendamentos() {
       $and: [
         { sentNotification: false },
         { date: getFormattedDate() },
-        {timeNotificationServerPush: { $ne: "" }},
+        { timeNotificationServerPush: { $ne: "" } },
       ]
     }).populate(['userId']);
     // Cancelar todos os agendamentos existentes
@@ -88,16 +88,20 @@ async function atualizarAgendamentos() {
 // Agendar uma notificação
 function agendarNotificacao(notification) {
 
-  const { title, body, date, timeNotificationServerPush, userId, _id} = notification;
-  const scheduledDateTime = parseDateTimeStrings(date, timeNotificationServerPush);
+  try {
+    const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
+    const scheduledDateTime = parseDateTimeStrings(date, timeNotificationServerPush);
 
-  console.log("schedule", scheduledDateTime);
-  console.log("currentDate", getFormattedDate())
-  // Agendar o envio da notificação com base na data e horário salvos pelo usuário
-  schedule.scheduleJob(scheduledDateTime, () => {
-    console.log("scheduledDateTime SEND", scheduledDateTime)
-    enviarNotificacao({ recipient: userId.recipient, title, body, id: _id });
-  });
+    console.log("schedule", scheduledDateTime);
+    console.log("currentDate", getFormattedDate())
+    // Agendar o envio da notificação com base na data e horário salvos pelo usuário
+    schedule.scheduleJob(scheduledDateTime, () => {
+      console.log("scheduledDateTime SEND", scheduledDateTime)
+      enviarNotificacao({ recipient: userId.recipient, title, body, id: _id });
+    });
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 // Função para configurar o change stream e iniciar o processo
