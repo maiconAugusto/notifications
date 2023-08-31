@@ -12,6 +12,7 @@ class InitService {
   }
 
   private async initScript() {
+    console.log("THIS")
     await iniciarAgendamentoENotificacoes();
   }
 }
