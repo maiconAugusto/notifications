@@ -37,7 +37,7 @@ function parseDateTimeStrings(dateString, timeString) {
 
   // Se atentar nesse fuso horario, dependendo de onde for hospedado, pode ficar ruim.
   const dateTimeBrasilia = new Date(year, month - 1, day, hour, minute);
-  dateTimeBrasilia.setUTCHours(dateTimeBrasilia.getUTCHours() - 2);
+  dateTimeBrasilia.setUTCHours(dateTimeBrasilia.getUTCHours() - 3);
 
   return dateTimeBrasilia;
 }
@@ -80,8 +80,8 @@ async function atualizarAgendamentos() {
 function agendarNotificacao(notification) {
 
   try {
-    const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
-    const scheduledDateTime = parseDateTimeStrings(date, timeNotificationServerPush);
+    const { title, body, date, timeNotificationMobile, userId, _id } = notification;
+    const scheduledDateTime = parseDateTimeStrings(date, timeNotificationMobile);
 
     console.log("schedule", scheduledDateTime);
     console.log("currentDate", getFormattedDate())
