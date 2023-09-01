@@ -34,10 +34,10 @@ function parseDateTimeStrings(dateString, timeString) {
   const [year, month, day] = dateString.split('-').map(Number);
   const [hour, minute] = timeString.split(':').map(Number);
 
-  // Criar um objeto Moment com o fuso horário de Brasília (GMT-3)
-  const dateTimeBrasilia = moment.tz([year, month - 1, day, hour, minute], 'America/Sao_Paulo');
+  // Criar um objeto Date com o fuso horário de Brasília (GMT-3)
+  const dateTimeBrasilia = new Date(Date.UTC(year, month - 1, day, hour - 3, minute));
 
-  return dateTimeBrasilia.toDate();
+  return dateTimeBrasilia;
 }
 
 function getFormattedDate() {
