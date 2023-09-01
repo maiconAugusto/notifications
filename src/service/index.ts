@@ -1,7 +1,7 @@
 import firebaseAdm from '../drivers/index'
 import notification_schema from '../external/database/schema';
 import user_schema from '../external/database/schema/user_schema';
-const moment = require('moment-timezone');
+const { DateTime, Settings } = require('luxon');
 
 
 import schedule from 'node-schedule';
@@ -31,19 +31,10 @@ function enviarNotificacao(notificacao) {
 
 // Converter a data e a string de horário em um objeto Date
 function parseDateTimeStrings(dateString, timeString) {
-  const [year, month, day] = dateString.split('-').map(Number);
-  const [hour, minute] = timeString.split(':').map(Number);
+  const dateTimeStr = `${dateString}T${timeString}:00`;
+  const dateTime = DateTime.fromISO(dateTimeStr, { zone: 'America/Sao_Paulo' });
 
-  // Criar um objeto Date com o fuso horário de Brasília (GMT-3)
-  const dateTimeBrasilia = new Date(year, month - 1, day, hour, minute);
-  
-  // Ajustar para o horário de verão em Brasília, se aplicável (de outubro a fevereiro)
-  const isDST = (month >= 10 || month <= 2);
-  if (isDST) {
-    dateTimeBrasilia.setHours(dateTimeBrasilia.getHours() + 1);
-  }
-
-  return dateTimeBrasilia;
+  return dateTime.toJSDate();
 }
 
 function getFormattedDate() {
@@ -84,8 +75,11 @@ async function atualizarAgendamentos() {
 function agendarNotificacao(notification) {
 
   try {
+    Settings.defaultZoneName = 'America/Sao_Paulo'; // Define o fuso horário padrão para Brasília
+
     const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
-    const scheduledDateTime = parseDateTimeStrings(date, timeNotificationServerPush);
+    const dateTimeBrasilia = parseDateTimeStrings(date, timeNotificationServerPush);
+    const scheduledDateTime = dateTimeBrasilia.toISOString();
 
     console.log("schedule", scheduledDateTime);
     console.log("currentDate", getFormattedDate())
