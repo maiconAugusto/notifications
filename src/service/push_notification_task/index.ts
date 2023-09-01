@@ -71,17 +71,20 @@ async function atualizarAgendamentos() {
 function agendarNotificacao(notification) {
     try {
         const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
-        
+
         // Combine a data e a hora em uma única string no fuso horário local
         const localDateTimeString = `${date}T${timeNotificationServerPush}`;
-        
-        // Crie um objeto DateTime usando o fuso horário de Brasília
-        const scheduledDateTime = DateTime.fromISO(localDateTimeString, { zone: 'America/Sao_Paulo' });
-        
-        console.log("scheduledDateTime SEND", scheduledDateTime.toString());
+
+        // Crie um objeto DateTime usando o fuso horário local
+        const localDateTime = DateTime.fromISO(localDateTimeString);
+
+        // Defina o fuso horário para Brasília (GMT-3)
+        const brasiliaDateTime = localDateTime.setZone('America/Sao_Paulo');
+
+        console.log("scheduledDateTime SEND", brasiliaDateTime.toString());
 
         // Agendar o envio da notificação com base na data e horário salvos pelo usuário
-        schedule.scheduleJob(scheduledDateTime.toDate(), () => {
+        schedule.scheduleJob(brasiliaDateTime.toJSDate(), () => {
             enviarNotificacao({ recipient: userId.recipient, title, body, id: _id });
         });
     } catch (error) {
