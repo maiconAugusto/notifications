@@ -42,12 +42,12 @@ function reiniciarAgendamentoDiario() {
   const timeZoneOffset = now.getTimezoneOffset() / 60; // Converter para horas
   const brasilOffset = timeZoneOffset - 3; // BRT (UTC-3) ou BRST (UTC-2 quando aplicável)
 
-  // Calcular o horário local de reinicialização (00:00) no horário do Brasil
+  // Calcular o horário local de reinicialização (00:20) no horário do Brasil
   const resetTime = new Date();
-  resetTime.setHours(24 + brasilOffset, 0, 0, 0); // Definindo para 00:00 no horário do Brasil
+  resetTime.setHours(24 + brasilOffset, 20, 0, 0); // Definindo para 00:20 no horário do Brasil
 
-  // Agendar a reinicialização diariamente às 00:00 no horário do Brasil
-  const dailyResetJob = schedule.scheduleJob('0 0 * * *', () => {
+  // Agendar a reinicialização diariamente às 00:20 no horário do Brasil
+  const dailyResetJob = schedule.scheduleJob('20 0 * * *', () => {
     // Atualizar e reiniciar o agendamento das notificações
     atualizarAgendamentos();
   });
