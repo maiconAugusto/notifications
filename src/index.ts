@@ -1,8 +1,7 @@
 import 'dotenv/config';
 import database from "./external/database";
-import iniciarAgendamentoENotificacoes from "./service";
-const schedule = require('node-schedule');
-const { exec } = require('child_process');
+import iniciarAgendamentoENotificacoes from "./service/push_notification_task";
+import schedule from 'node-schedule';
 
 class InitService {
   constructor() {
