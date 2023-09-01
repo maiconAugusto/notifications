@@ -35,7 +35,7 @@ function parseDateTimeStrings(dateString, timeString) {
 
   // Criar um objeto Date com o fuso horário de Brasília (GMT-3)
   const dateTimeBrasilia = new Date(year, month - 1, day, hour, minute);
-  dateTimeBrasilia.setUTCHours(dateTimeBrasilia.getUTCHours() - 3);
+  dateTimeBrasilia.setUTCHours(dateTimeBrasilia.getUTCHours() - 2);
 
   return dateTimeBrasilia;
 }
