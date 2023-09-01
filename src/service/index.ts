@@ -37,7 +37,7 @@ function parseDateTimeStrings(dateString, timeString) {
 
   // Se atentar nesse fuso horario, dependendo de onde for hospedado, pode ficar ruim.
   const dateTimeBrasilia = new Date(year, month - 1, day, hour, minute);
-  dateTimeBrasilia.setUTCHours(dateTimeBrasilia.getUTCHours() - 3);
+  dateTimeBrasilia.setUTCHours(dateTimeBrasilia.getUTCHours());
 
   return dateTimeBrasilia;
 }
