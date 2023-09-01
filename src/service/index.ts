@@ -31,10 +31,13 @@ function enviarNotificacao(notificacao) {
 
 // Converter a data e a string de horário em um objeto Date
 function parseDateTimeStrings(dateString, timeString) {
-  const dateTimeStr = `${dateString}T${timeString}:00`;
-  const dateTime = DateTime.fromISO(dateTimeStr, { zone: 'America/Sao_Paulo' });
+  const [year, month, day] = dateString.split('-').map(Number);
+  const [hour, minute] = timeString.split(':').map(Number);
 
-  return dateTime.toJSDate();
+  // Criar um objeto Date com o fuso horário de Brasília (GMT-3)
+  const dateTimeBrasilia = new Date(Date.UTC(year, month - 1, day, hour - 3, minute));
+
+  return dateTimeBrasilia;
 }
 
 function getFormattedDate() {
@@ -75,11 +78,9 @@ async function atualizarAgendamentos() {
 function agendarNotificacao(notification) {
 
   try {
-    Settings.defaultZoneName = 'America/Sao_Paulo'; // Define o fuso horário padrão para Brasília
-
+    
     const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
-    const dateTimeBrasilia = parseDateTimeStrings(date, timeNotificationServerPush);
-    const scheduledDateTime = dateTimeBrasilia.toISOString();
+    const scheduledDateTime = parseDateTimeStrings(date, timeNotificationServerPush);
 
     console.log("schedule", scheduledDateTime);
     console.log("currentDate", getFormattedDate())
