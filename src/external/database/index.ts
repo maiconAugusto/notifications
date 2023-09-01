@@ -16,7 +16,10 @@ class Database {
       useNewUrlParser: true
     })
       .then(() => {
+        console.log("success mongo")
         require('./schema/user_schema')
+      }).catch(() => {
+        console.log("error mongo")
       })
   }
 }
