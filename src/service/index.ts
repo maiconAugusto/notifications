@@ -69,8 +69,8 @@ async function atualizarAgendamentos() {
     const notifications = await notification_schema.find({
       $and: [
         { sentNotification: false },
-        { date: getFormattedDate() },
-        { timeNotificationServerPush: { $ne: "" } },
+        // { date: getFormattedDate() },
+        // { timeNotificationServerPush: { $ne: "" } },
       ]
     }).populate(['userId']);
     // Cancelar todos os agendamentos existentes
