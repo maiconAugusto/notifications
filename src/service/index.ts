@@ -34,8 +34,10 @@ function parseDateTimeStrings(dateString, timeString) {
   const [year, month, day] = dateString.split('-').map(Number);
   const [hour, minute] = timeString.split(':').map(Number);
 
+  console.log("utc server", new Date())
+
   // Criar um objeto Date com o fuso horário de Brasília (GMT-3)
-  const dateTimeBrasilia = new Date(Date.UTC(year, month - 1, day, hour, minute));
+  const dateTimeBrasilia = new Date(Date.UTC(year, month - 1, day, hour - 3, minute));
   return dateTimeBrasilia;
 }
 
