@@ -65,7 +65,7 @@ function getFormattedDate() {
 // Atualizar ou agendar notificações após alterações no banco de dados
 async function atualizarAgendamentos() {
   try {
-
+    console.log("getFormattedDate()", getFormattedDate())
     const notifications = await notification_schema.find({
       $and: [
         { sentNotification: false },
