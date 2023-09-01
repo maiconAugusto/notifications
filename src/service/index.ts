@@ -69,7 +69,7 @@ async function atualizarAgendamentos() {
     const notifications = await notification_schema.find({
       $and: [
         { sentNotification: false },
-        // { date: getFormattedDate() },
+        { date: getFormattedDate() },
         // { timeNotificationServerPush: { $ne: "" } },
       ]
     }).populate(['userId']);
