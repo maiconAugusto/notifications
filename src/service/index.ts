@@ -80,8 +80,8 @@ async function atualizarAgendamentos() {
 function agendarNotificacao(notification) {
 
   try {
-    const { title, body, date, timeNotificationMobile, userId, _id } = notification;
-    const scheduledDateTime = parseDateTimeStrings(date, timeNotificationMobile);
+    const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
+    const scheduledDateTime = parseDateTimeStrings(date, timeNotificationServerPush);
 
     console.log("schedule", scheduledDateTime);
     console.log("currentDate", getFormattedDate())
