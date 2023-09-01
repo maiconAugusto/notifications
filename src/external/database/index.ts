@@ -13,7 +13,6 @@ class Database {
     // @ts-ignore
   
     return mongoose.connect("mongodb+srv://sistemamg:IAckbJxUwgpXgsox@cluster0.vctr8.mongodb.net/teste", {
-      useCreateIndex: true,
       useNewUrlParser: true
     })
       .then(() => {

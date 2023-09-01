@@ -74,6 +74,7 @@ async function atualizarAgendamentos() {
       ]
     }).populate(['userId']);
     // Cancelar todos os agendamentos existentes
+    console.log("noti", notifications)
     schedule.cancelJob();
 
     // Agendar novamente todas as notificações com base nos novos dados
