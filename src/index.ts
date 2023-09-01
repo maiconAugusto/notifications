@@ -15,13 +15,13 @@ class InitService {
 
   private async initScript() {
     iniciarAgendamentoENotificacoes()
-    // Definir a regra de agendamento para 00:00 no horário de Brasília (GMT-3)
-    // const rule = new schedule.RecurrenceRule();
-    // rule.tz = 'America/Sao_Paulo'; // Horário de Brasília
-    // rule.hour = 0;
-    // rule.minute = 0;
 
-    // schedule.scheduleJob(rule, iniciarAgendamentoENotificacoes);
+    const rule = new schedule.RecurrenceRule();
+    rule.tz = 'America/Sao_Paulo'; // Horário de Brasília
+    rule.hour = 0;
+    rule.minute = 0;
+
+    schedule.scheduleJob(rule, iniciarAgendamentoENotificacoes);
   }
 }
 new InitService();

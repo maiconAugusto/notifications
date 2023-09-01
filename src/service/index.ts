@@ -34,8 +34,10 @@ function parseDateTimeStrings(dateString, timeString) {
   const [hour, minute] = timeString.split(':').map(Number);
 
   // Criar um objeto Date com o fuso horário de Brasília (GMT-3)
+
+  // Se atentar nesse fuso horario, dependendo de onde for hospedado, pode ficar ruim.
   const dateTimeBrasilia = new Date(year, month - 1, day, hour, minute);
-  dateTimeBrasilia.setUTCHours(dateTimeBrasilia.getUTCHours() - 2);
+  dateTimeBrasilia.setUTCHours(dateTimeBrasilia.getUTCHours() - 4);
 
   return dateTimeBrasilia;
 }
@@ -57,7 +59,8 @@ async function atualizarAgendamentos() {
       $and: [
         { sentNotification: false },
         { date: getFormattedDate() },
-        // { timeNotificationServerPush: { $ne: "" } },
+        { timeNotificationServerPush: { $ne: null } }, 
+        { timeNotificationServerPush: { $ne: "" } }
       ]
     }).populate(['userId']);
     // Cancelar todos os agendamentos existentes
