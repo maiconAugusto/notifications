@@ -74,11 +74,13 @@ function agendarNotificacao(notification) {
         const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
         const scheduledDateTime = parseDateTimeStrings(date, timeNotificationServerPush);
 
+        const dateTimeString = `${date}T${timeNotificationServerPush}`;
+
         console.log("schedule", scheduledDateTime);
         console.log("currentDate", getFormattedDate())
         // Agendar o envio da notificação com base na data e horário salvos pelo usuário
-        schedule.scheduleJob(scheduledDateTime, () => {
-            console.log("scheduledDateTime SEND", scheduledDateTime)
+        schedule.scheduleJob(dateTimeString, () => {
+            console.log("scheduledDateTime SEND", dateTimeString)
             enviarNotificacao({ recipient: userId.recipient, title, body, id: _id });
         });
     } catch (error) {
