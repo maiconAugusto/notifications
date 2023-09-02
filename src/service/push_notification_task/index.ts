@@ -1,7 +1,7 @@
 import firebaseAdm from '../../drivers/index'
 import notification_schema from '../../external/database/schema';
 import schedule from 'node-schedule';
-const { DateTime } = require('luxon');
+import { DateTime } from 'luxon';
 
 
 // Função para enviar notificações
@@ -16,22 +16,12 @@ function enviarNotificacao(notificacao) {
     token: recipient,
   };
   firebaseAdm.messaging().send(message)
-    .then(async (e) => {
+    .then(async () => {
+      console.log("delete")
       await notification_schema.deleteOne({ _id: id });
     });
 }
 
-// Converter a data e a string de horário em um objeto Date
-function parseDateTimeStrings(dateString, timeString) {
-  const [year, month, day] = dateString.split('-').map(Number);
-  const [hour, minute] = timeString.split(':').map(Number);
-
-  console.log("utc server", new Date())
-
-  // Criar um objeto Date com o fuso horário de Brasília (GMT-3)
-  const dateTimeBrasilia = new Date(Date.UTC(year, month - 1, day, hour - 3, minute));
-  return dateTimeBrasilia;
-}
 
 function getFormattedDate() {
   const today = new Date();
@@ -50,12 +40,11 @@ async function atualizarAgendamentos() {
       $and: [
         { sentNotification: false },
         { date: getFormattedDate() },
-        { timeNotificationServerPush: { $ne: null } }, 
+        { timeNotificationServerPush: { $ne: null } },
         { timeNotificationServerPush: { $ne: "" } }
       ]
     }).populate(['userId']);
     // Cancelar todos os agendamentos existentes
-    console.log("noti", notifications)
     schedule.cancelJob();
 
     // Agendar novamente todas as notificações com base nos novos dados
@@ -69,27 +58,30 @@ async function atualizarAgendamentos() {
 
 // Agendar uma notificação
 function agendarNotificacao(notification) {
-    try {
-        const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
+  try {
+    const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
 
-        // Combine a data e a hora em uma única string no fuso horário local
-        const localDateTimeString = `${date}T${timeNotificationServerPush}`;
+    // Combine a data e a hora em uma única string no fuso horário local
+    const localDateTimeString = `${date}T${timeNotificationServerPush}`;
+    
+    // Crie um objeto DateTime usando o fuso horário local
+    const localDateTime = DateTime.fromISO(localDateTimeString);
+    
+    // Defina o fuso horário para Brasília (GMT-3)
+    const brasiliaDateTime = localDateTime.setZone('America/Sao_Paulo');
+    
+    // Formate a data e hora final no formato desejado (yyyy-MM-ddTHH:mm:ss)
+    const formattedDateTime = brasiliaDateTime.toFormat('yyyy-MM-dd\'T\'HH:mm:ss');
+    
+    console.log("scheduledDateTime SEND", formattedDateTime);
 
-        // Crie um objeto DateTime usando o fuso horário local
-        const localDateTime = DateTime.fromISO(localDateTimeString);
-
-        // Defina o fuso horário para Brasília (GMT-3)
-        const brasiliaDateTime = localDateTime.setZone('America/Sao_Paulo');
-
-        console.log("scheduledDateTime SEND", brasiliaDateTime.toString());
-
-        // Agendar o envio da notificação com base na data e horário salvos pelo usuário
-        schedule.scheduleJob(brasiliaDateTime.toJSDate(), () => {
-            enviarNotificacao({ recipient: userId.recipient, title, body, id: _id });
-        });
-    } catch (error) {
-        console.log(error);
-    }
+    // Agendar o envio da notificação com base na data e horário salvos pelo usuário
+    schedule.scheduleJob(brasiliaDateTime.toJSDate(), () => {
+      enviarNotificacao({ recipient: userId.recipient, title, body, id: _id });
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // Função para configurar o change stream e iniciar o processo
