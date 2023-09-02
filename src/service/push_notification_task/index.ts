@@ -62,16 +62,13 @@ function agendarNotificacao(notification) {
   try {
     const { title, body, date, timeNotificationServerPush, userId, _id } = notification;
 
-    // Combine a data e a hora em uma única string no fuso horário local
+    // Combine a data e a hora em uma única string
     const localDateTimeString = `${date}T${timeNotificationServerPush}`;
     
-    // Crie um objeto DateTime usando o fuso horário local
-    const localDateTime = DateTime.fromISO(localDateTimeString);
+    // Crie um objeto DateTime usando o fuso horário local (Brasília)
+    const brasiliaDateTime = DateTime.fromISO(localDateTimeString, { zone: 'America/Sao_Paulo' });
     
-    // Defina o fuso horário para Brasília (GMT-3)
-    const brasiliaDateTime = localDateTime.setZone('America/Sao_Paulo');
-    
-    // Formate a data e hora final no formato desejado (yyyy-MM-ddTHH:mm:ss)
+    // Formate a data e hora final no formato desejado (yyyy-MM-dd'T'HH:mm:ss)
     const formattedDateTime = brasiliaDateTime.toFormat('yyyy-MM-dd\'T\'HH:mm:ss');
     
     console.log("scheduledDateTime SEND", formattedDateTime);
