@@ -69,7 +69,7 @@ function agendarNotificacao(notification) {
     const localDateTime = DateTime.fromISO(localDateTimeString);
     
     // Defina o fuso horário para Brasília (GMT-3)
-    const brasiliaDateTime = localDateTime.setZone('America/Sao_Paulo');
+    const brasiliaDateTime = localDateTime
     
     // Formate a data e hora final no formato desejado (yyyy-MM-ddTHH:mm:ss)
     const formattedDateTime = brasiliaDateTime.toFormat('yyyy-MM-dd\'T\'HH:mm:ss');
