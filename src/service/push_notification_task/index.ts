@@ -44,6 +44,7 @@ async function atualizarAgendamentos() {
         { timeNotificationServerPush: { $ne: "" } }
       ]
     }).populate(['userId']);
+    console.log(notifications);
     // Cancelar todos os agendamentos existentes
     schedule.cancelJob();
 
