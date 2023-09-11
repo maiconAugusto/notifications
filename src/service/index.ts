@@ -1,0 +1,124 @@
+import firebaseAdm from '../drivers/index'
+import notification_schema from '../external/database/schema';
+import user_schema from '../external/database/schema/user_schema';
+
+
+import schedule from 'node-schedule';
+
+
+// Função para enviar notificações
+function enviarNotificacao(notificacao) {
+  const { recipient, title, body, id } = notificacao;
+
+  const message = {
+    notification: {
+      title: title,
+      body: body,
+    },
+    token: recipient,
+  };
+  
+  firebaseAdm.messaging().send(message)
+    .then(async() => {
+      await notification_schema.updateOne({ _id: id }, { sentNotification: true });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+// Converter a data e a string de horário em um objeto Date
+function parseDateTimeStrings(dateString, timeString) {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const [hour, minute] = timeString.split(':').map(Number);
+  return new Date(year, month - 1, day, hour, minute);
+}
+
+// Função para reiniciar o agendamento e atualização diariamente às 00:00 no horário do Brasil
+function reiniciarAgendamentoDiario() {
+  // Obter a hora atual no fuso horário do Brasil (BRT ou BRST)
+  const now = new Date();
+  const timeZoneOffset = now.getTimezoneOffset() / 60; // Converter para horas
+  const brasilOffset = timeZoneOffset - 3; // BRT (UTC-3) ou BRST (UTC-2 quando aplicável)
+
+  // Calcular o horário local de reinicialização (00:00) no horário do Brasil
+  const resetTime = new Date();
+  resetTime.setHours(24 + brasilOffset, 0, 0, 0); // Definindo para 00:00 no horário do Brasil
+
+  // Agendar a reinicialização diariamente às 00:00 no horário do Brasil
+  const dailyResetJob = schedule.scheduleJob('0 0 * * *', () => {
+    // Atualizar e reiniciar o agendamento das notificações
+    atualizarAgendamentos();
+  });
+}
+
+function getFormattedDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Mês começa de 0
+    const day = String(today.getDate()).padStart(2, '0');
+  
+    return `${year}-${month}-${day}`;
+  }
+
+// Atualizar ou agendar notificações após alterações no banco de dados
+async function atualizarAgendamentos() {
+  try {
+
+    const notifications = await notification_schema.find({
+      $and: [
+        { sentNotification: false },
+        { date: getFormattedDate() },
+        {timeNotificationServerPush: { $ne: "" }},
+      ]
+    }).populate(['userId']);
+    // Cancelar todos os agendamentos existentes
+    schedule.cancelJob();
+
+    // Agendar novamente todas as notificações com base nos novos dados
+    for (const notification of notifications) {
+      agendarNotificacao(notification);
+    }
+  } catch (error) {
+    console.error('Erro ao atualizar agendamentos:', error);
+  }
+}
+
+// Agendar uma notificação
+function agendarNotificacao(notification) {
+
+  const { title, body, date, timeNotificationServerPush, userId, _id} = notification;
+  const scheduledDateTime = parseDateTimeStrings(date, timeNotificationServerPush);
+
+
+  // Agendar o envio da notificação com base na data e horário salvos pelo usuário
+  schedule.scheduleJob(scheduledDateTime, () => {
+    enviarNotificacao({ recipient: userId.recipient, title, body, id: _id });
+  });
+}
+
+// Função para configurar o change stream e iniciar o processo
+export default async function iniciarAgendamentoENotificacoes() {
+  // Inicializar o agendamento das notificações
+  await atualizarAgendamentos();
+  // Configurar o change stream para ouvir mudanças na coleção de notificações
+  // @ts-ignore
+  const changeStream = notification_schema.watch({ fullDocument: 'updateLookup' });
+
+  changeStream.on('change', (change) => {
+    // Verificar se as informações relevantes foram alteradas
+    if (
+      change.operationType === 'insert' || // Novo dado inserido
+      (change.operationType === 'update' && (
+        change.updateDescription.updatedFields.date || // date foi atualizado
+        change.updateDescription.updatedFields.timeNotificationServerPush // timeNotification foi atualizado
+      ))
+    ) {
+      // Atualizar os agendamentos após uma mudança
+      atualizarAgendamentos();
+    }
+  });
+
+  // Agendar reinicialização diária
+  reiniciarAgendamentoDiario();
+}

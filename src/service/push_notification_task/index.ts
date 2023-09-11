@@ -17,7 +17,6 @@ function enviarNotificacao(notificacao) {
   };
   firebaseAdm.messaging().send(message)
     .then(async () => {
-      console.log("delete")
       await notification_schema.deleteOne({ _id: id });
     });
 }
@@ -46,6 +45,7 @@ async function atualizarAgendamentos() {
     }).populate(['userId']);
     console.log(notifications);
     // Cancelar todos os agendamentos existentes
+    // @ts-ignore
     schedule.cancelJob();
 
     // Agendar novamente todas as notificações com base nos novos dados
