@@ -1866,6 +1866,11 @@ typescript@^5.1.6:
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.2.2.tgz"
   integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
 
+tz-offset@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/tz-offset/-/tz-offset-0.0.2.tgz#1c30fcaeff1fbbc09c85c8eec1a6d37b3a0a61ae"
+  integrity sha512-nCaj0ZpQ8j8iySMJi8G829wgbTQv2EuZe3JVIOWAYQGd2TZf0bOF8TGXz8j2g17B5WDoW85lt15zguh6OnnRZw==
+
 uc.micro@^1.0.1, uc.micro@^1.0.5:
   version "1.0.6"
   resolved "https://registry.npmjs.org/uc.micro/-/uc.micro-1.0.6.tgz"

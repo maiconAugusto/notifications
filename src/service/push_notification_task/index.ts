@@ -2,6 +2,8 @@ import firebaseAdm from '../../drivers/index'
 import notification_schema from '../../external/database/schema';
 import schedule from 'node-schedule';
 import { DateTime } from 'luxon';
+const { now, offset } = require('tz-offset');
+
 
 
 // Função para enviar notificações
@@ -23,10 +25,16 @@ function enviarNotificacao(notificacao) {
 
 
 function getFormattedDate() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0'); // Mês começa de 0
-  const day = String(today.getDate()).padStart(2, '0');
+  // Obtém o timestamp atual em Brasília
+  const brasiliaTimestamp = now('America/Sao_Paulo');
+
+  // Cria um objeto Date a partir do timestamp em Brasília
+  const brasiliaDate = new Date(brasiliaTimestamp);
+
+  // Obtém os componentes de data no fuso horário de Brasília
+  const year = brasiliaDate.getFullYear();
+  const month = String(brasiliaDate.getMonth() + 1).padStart(2, '0');
+  const day = String(brasiliaDate.getDate()).padStart(2, '0');
 
   return `${year}-${month}-${day}`;
 }

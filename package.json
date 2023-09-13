@@ -25,6 +25,7 @@
     "luxon": "^3.4.2",
     "moment-timezone": "^0.5.43",
     "mongoose": "^7.5.0",
-    "node-schedule": "^2.1.1"
+    "node-schedule": "^2.1.1",
+    "tz-offset": "^0.0.2"
   }
 }
