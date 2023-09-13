@@ -43,7 +43,6 @@ function getFormattedDate() {
 // Atualizar ou agendar notificações após alterações no banco de dados
 async function atualizarAgendamentos() {
   try {
-    console.log("getFormattedDate()", getFormattedDate())
     const notifications = await notification_schema.find({
       $and: [
         { sentNotification: false },
@@ -52,7 +51,7 @@ async function atualizarAgendamentos() {
         { timeNotificationServerPush: { $ne: "" } }
       ]
     }).populate(['userId']);
-    console.log(notifications);
+    console.log(notifications)
     // Cancelar todos os agendamentos existentes
     // @ts-ignore
     schedule.cancelJob();
@@ -108,8 +107,15 @@ export default async function iniciarAgendamentoENotificacoes() {
         change.updateDescription.updatedFields.timeNotificationServerPush // timeNotification foi atualizado
       ))
     ) {
+      const dateA = new Date(change.updateDescription.updatedFields.date);
+      let currentDate = getFormattedDate();
+      const dateB = new Date(currentDate!);
+
+      console.log(dateA >= dateB)
+      if (dateA >= dateB) {
       // Atualizar os agendamentos após uma mudança
       atualizarAgendamentos();
+      }
     }
   });
 }
