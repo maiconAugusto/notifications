@@ -2,7 +2,7 @@ import firebaseAdm from '../../drivers/index'
 import notification_schema from '../../external/database/schema';
 import schedule from 'node-schedule';
 import { DateTime } from 'luxon';
-const { now, offset } = require('tz-offset');
+const { getOffsetDate } = require('tz-offset');
 
 
 
@@ -25,18 +25,19 @@ function enviarNotificacao(notificacao) {
 
 
 function getFormattedDate() {
-  // Obtém o timestamp atual em Brasília
-  const brasiliaTimestamp = now('America/Sao_Paulo');
+ // Obtém a data e hora atual no servidor em Washington, D.C.
+ const washingtonDateTime = DateTime.now();
 
-  // Cria um objeto Date a partir do timestamp em Brasília
-  const brasiliaDate = new Date(brasiliaTimestamp);
+ // Define o fuso horário desejado (Brasília)
+ const brasiliaTimeZone = 'America/Sao_Paulo';
 
-  // Obtém os componentes de data no fuso horário de Brasília
-  const year = brasiliaDate.getFullYear();
-  const month = String(brasiliaDate.getMonth() + 1).padStart(2, '0');
-  const day = String(brasiliaDate.getDate()).padStart(2, '0');
+ // Converte a data e hora para o fuso horário de Brasília
+ const brasiliaDateTime = washingtonDateTime.setZone(brasiliaTimeZone);
 
-  return `${year}-${month}-${day}`;
+ // Formata a data atual no fuso horário de Brasília
+ const formattedDate = brasiliaDateTime.toISODate();
+
+ return formattedDate;
 }
 
 // Atualizar ou agendar notificações após alterações no banco de dados
