@@ -107,15 +107,7 @@ export default async function iniciarAgendamentoENotificacoes() {
         change.updateDescription.updatedFields.timeNotificationServerPush // timeNotification foi atualizado
       ))
     ) {
-      const dateA = new Date(change.updateDescription.updatedFields.date);
-      let currentDate = getFormattedDate();
-      const dateB = new Date(currentDate!);
-
-      console.log(dateA >= dateB)
-      if (dateA >= dateB) {
-      // Atualizar os agendamentos após uma mudança
       atualizarAgendamentos();
-      }
     }
   });
 }
