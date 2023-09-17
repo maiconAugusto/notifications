@@ -12,7 +12,7 @@ class Database {
   public databaseConnection(): Promise<Mongoose> {
     // @ts-ignore
   
-    return mongoose.connect("mongodb+srv://sistemamg:IAckbJxUwgpXgsox@cluster0.vctr8.mongodb.net/teste", {
+    return mongoose.connect("mongodb+srv://apitask:j5X8ntbbMfP3oS5O@taskapp.q9crxam.mongodb.net/taskapp?retryWrites=true&w=majority", {
       useUnifiedTopology: true
     })
       .then(() => {
